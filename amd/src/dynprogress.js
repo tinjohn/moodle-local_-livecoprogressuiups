@@ -16,7 +16,7 @@
 /**
  * Dynamic Progressbar and more
  *
- * @module     local_livecoprogressuiups/dynprbar
+ * @module     local_livecoprogressuiups/dynprogress
  * @copyright  2023 Tina John <tina.john@th-luebeck.de>
  * @copyright  Institut fuer interaktive Systeme der TH Lübeck
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -31,8 +31,10 @@ import {get_H5P_ActivityInformation_InnerHTML} from './local/dynprogress/reposit
 import selectors from 'local_livecoprogressuiups/local/dynprogress/selectors';
 
 /**
-* USED get course id from body tag.
-*/
+ * Gets the course id from body tag.
+ *
+ * @returns courseid or false.
+ */
 function getCourseIdFromBody() {
     const bodyTag = document.getElementsByTagName('body')[0];
     const attributeNames = bodyTag.getAttributeNames();
@@ -44,7 +46,7 @@ function getCourseIdFromBody() {
         if (matches) {
             const courseNumber = matches[0];
             courseid = courseNumber.split('-')[1];
-            window.console.log("lcprogessuiups-- Coursenumber------", courseid); // Output: course-64
+            window.console.log("lcprogessuiups-- Coursenumber------", courseid);
             return(courseid);
         }
     });
@@ -56,51 +58,20 @@ function getCourseIdFromBody() {
 }
 
 /**
+ * Replaces the whole DOM element looked for by the given selectorclass starting from DOMs 'element'.
+ * It is not as smooth as just changing a parameter in DOM elements like the width of a progressbar,
+ * but the DOM element is correct and overall up-to-date.
  *
- * @param {*} course_id
- * @returns Promise
+ * @param {*} selectorclass
+ * @param {*} element by default document
  */
-async function promise_get_theme_learnr_Progressbar_InnerHTM(course_id) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const response = await get_theme_learnr_Progressbar_InnerHTML(course_id);
-        if (response && response.innerHTML) {
-          resolve(response.innerHTML);
-        } else {
-          reject(response);
-        }
-      } catch (error) {
-        reject(error);
-      }
-    });
-}
-
-/**
- *
- * @param {*} innerHTML
- */
-// function modifyDOMWORKS(innerHTML) {
-//     const prcourseview = document.getElementsByClassName(selectors.progressbar.body)[0];
-//     var elementToReplace = prcourseview;
-//      // Creates additional div but the parent node might have siblings just to be safe.
-//      const newElement = document.createElement('div');
-//     newElement.innerHTML = innerHTML;
-//     const parentElement = elementToReplace.parentNode;
-//     parentElement.replaceChild(newElement, elementToReplace);
-// }
-
-
-/**
- *
- * @param {*} aselector
- */
-function modifyDOM(aselector) {
+function replaceDOM(selectorclass, element = document) {
     // The callback function onResolve holds the promise return value.
-    // That way the additional aselector argument mandatory for modifyDOM and the promise value are accessible.
+    // That way the additional selectorclass argument mandatory for replaceDOM and the promise value are accessible.
     return function onResolve(innerHTML) {
-        const elementToReplace = document.getElementsByClassName(aselector)[0];
+        const elementToReplace = element.getElementsByClassName(selectorclass)[0];
         if(elementToReplace) {
-            window.console.log("---modifyDOM--", aselector);
+            window.console.log("---replaceDOM--", selectorclass);
             // Creates an additional div but the parent node might have siblings - just to be safe.
             const newElement = document.createElement('div');
             newElement.innerHTML = innerHTML;
@@ -110,16 +81,26 @@ function modifyDOM(aselector) {
     };
   }
 
+
 /**
+ * Takes a function that returns a string, that must contain an innerHTML attribute,
+ * that contains a string of an innerHTML.
+ * The function is async called due to the fact that the function might be a webservice.
  *
  * @param {*} getinnerhtmlfunc
  * @param {*} course_id
- * @returns
+ * @param {*} options
+ * @returns Promise with innerHTML string
  */
-async function promise_get_InnerHTM(getinnerhtmlfunc,course_id) {
+async function promise_get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
     return new Promise(async (resolve, reject) => {
       try {
-        const response = await getinnerhtmlfunc(course_id);
+        let response;
+        if (options.cmid) {
+            response = await getinnerhtmlfunc(course_id, options.cmid);
+        } else {
+            response = await getinnerhtmlfunc(course_id);
+        }
         if (response && response.innerHTML) {
           resolve(response.innerHTML);
         } else {
@@ -132,115 +113,34 @@ async function promise_get_InnerHTM(getinnerhtmlfunc,course_id) {
 }
 
 /**
- *
+ * Puts an error message to console.
  * @param {*} err
  */
 function onError(err) {
     window.console.log("--ERROR: ", err);
 }
 
-export const changeProgressbar = () => {
-    const course_id = getCourseIdFromBody();
-    if(course_id) {
-        promise_get_InnerHTM(get_theme_learnr_Progressbar_InnerHTML,course_id)
-            .then(modifyDOM(selectors.progressbar.body))
-            .catch(onError);
-    }
-};
 
+/**
+ * Gets the innerHTML from the given (service) function (servicefunc).
+ * Replaces the DOM element based on the selector given.
+ * @param {*} course_id
+ * @param {*} servicefunc
+ * @param {*} selector
+ */
 export const letthemagicbedone = (course_id,servicefunc,selector) => {
-        promise_get_InnerHTM(servicefunc,course_id)
-            .then(modifyDOM(selector))
+        promise_get_InnerHTML(servicefunc,course_id)
+            .then(replaceDOM(selector))
             .catch(onError);
 };
 
-export const changeProgressbarPROMISE_PARAMS_WORKS = () => {
-    const course_id = getCourseIdFromBody();
-    if(course_id) {
-        promise_get_InnerHTM(get_theme_learnr_Progressbar_InnerHTML,course_id)
-            .then(modifyDOM)
-            .catch(onError);
-    }
-};
 
-export const changeProgressbarPROMISEWORKS = () => {
-    const course_id = getCourseIdFromBody();
-    if(course_id) {
-        promise_get_theme_learnr_Progressbar_InnerHTM(course_id)
-            .then(modifyDOM)
-            .catch(onError);
-    }
-};
-
-/*
-* Reloads whole progressbar DOM element - it is not as smooth as just changing width.
-* On the other hand - the progress bar is correct and overall up-to-date.
-*/
-export const changeProgressbarWORKS = async() => {
-    // ...
-    //const prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
-    //const course_id = prbar.getAttribute('courseid');
-    const course_id = getCourseIdFromBody();
-    if(course_id) {
-        var response = await get_theme_learnr_Progressbar_InnerHTML(course_id);
-        if (response && response.innerHTML) {
-            window.console.log("lcprogessuiups-- get_theme_learnr_Progressbar_InnerHTML----response", response);
-            var innerHTML = response.innerHTML;
-            const prcourseview = document.getElementsByClassName(selectors.progressbar.body)[0];
-            var elementToReplace = prcourseview;
-             // creates additional div but the parent node might have siblings just to be safe
-             const newElement = document.createElement('div');
-            newElement.innerHTML = innerHTML;
-            const parentElement = elementToReplace.parentNode;
-            parentElement.replaceChild(newElement, elementToReplace);
-
-        } else {
-            window.console.log("lcprogessuiups-- no progressbar update available");
-        }
-        return true;
-    } else {
-        window.console.log("lcprogessuiups-- no course id detected");
-        return false;
-    }
-};
-
-
-/*
-* Updates the GAME plugin interface.
-*/
-export const changeGAME = async() => {
-    // ...
-    //const prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
-    //const course_id = prbar.getAttribute('courseid');
-    const course_id = getCourseIdFromBody();
-    if(course_id) {
-        // GAME
-        var response = await get_block_Game_InnerHTML(course_id);
-         if (response && response.innerHTML) {
-            window.console.log("lcprogessuiups-- get_block_Game_InnerHTML----response", response);
-             var innerHTML = response.innerHTML;
-             const prgame = document.getElementsByClassName(selectors.game.body)[0];
-             const elementToReplaceGAME = prgame.parentNode;
-             // creates additional div but the parent node might have siblings just to be safe
-             const newElementGAME = document.createElement('div');
-             newElementGAME.innerHTML = innerHTML;
-             const parentElementGAME = elementToReplaceGAME.parentNode;
-             parentElementGAME.replaceChild(newElementGAME, elementToReplaceGAME);
-
-         } else {
-             window.console.log("lcprogessuiups-- no game update possible");
-             window.console.log("lcprogessuiups-- get_block_Game_InnerHTML----response", response);
-         }
-        return true;
-    } else {
-        window.console.log("lcprogessuiups-- no course id detected");
-        return false;
-    }
-};
-
-/*
-* Function getCmid is called from changeCompletionInfo.
-*/
+/**
+ * Function extracts cmid from the given DOM elements that holds the information.
+ *
+ * @param {*} liidelement
+ * @returns
+ */
 const getCmid = (liidelement) => {
     var courseid;
     const attributeValue = liidelement.getAttribute('id');
@@ -254,25 +154,30 @@ const getCmid = (liidelement) => {
         }
   };
 
-/*
-* Updates the activity completion.
-*/
-const changeCompletionInfo = async (event) => {
-    window.console.log('lcprogessuiups-- --changeCompletionInfo--event',event);
+/**
+ * The way with more effort for h5p activity information.
+ * Analyses the event inforamtion.
+ * Gets the innerHTML from the given service function (get_H5P_ActivityInformation_InnerHTML).
+ * Modfies the the DOM based on the neareast list element
+ * and looks for the selector selectors.activityinfo.body within the list element.
+ *
+ * @param {*} course_id
+ * @param {*} event
+ */
+const modify_Activityinformation = (course_id,event) => {
+    window.console.log('lcprogessuiups----themagic_Activityinformation--event',event);
     if (event && event.detail) {
         if(event.detail.completionType && event.detail.completionType == 'H5Pscored') {
             if(event.detail.framedin) {
                 const eventtarget = event.detail.framedin;
                 window.console.log('lcprogessuiups-- eventtarget',eventtarget);
-            // var parentElement = document.querySelector('div[data-region="completion-info"] [id="childElementID"]');
+                // var parentElement = document.querySelector('div[data-region="completion-info"]
+                // [id="childElementID"]');
                 var element = eventtarget.closest('li > div');
                 const cmid = getCmid(eventtarget.closest('li'));
-                const course_id = getCourseIdFromBody();
-                const response = await get_H5P_ActivityInformation_InnerHTML(course_id, cmid);
-                window.console.log("lcprogessuiups-- get_H5P_ActivityInformation_InnerHTML----response", response);
-                var element = element.querySelector(selectors.activityinfo.body);
-                //var element = element.querySelector('div[data-region="activity-information"]');
-                element.innerHTML = response.innerHTML;
+                promise_get_InnerHTML(get_H5P_ActivityInformation_InnerHTML, course_id, { cmid: cmid })
+                    .then(modifyDOM(selectors.activityinfo.qselector,element))
+                    .catch(onError);
             } else {
                 window.console.log("lcprogessuiups-- no DOM for ActivityInformation in event");
             }
@@ -283,72 +188,47 @@ const changeCompletionInfo = async (event) => {
     return true;
 };
 
+/**
+ * Modifies the whole DOM elements innerHTML looked for by the given selectorq
+ * and the element to start from.
+ *
+ * @param {*} selectorq
+ * @param {*} element
+ */
+function modifyDOM(selectorq,element = document) {
+    return function onResolve(innerHTML) {
+        window.console.log("---modifyDOM--", selectorq);
+        var selelement = element.querySelector(selectorq);
+        selelement.innerHTML = innerHTML;
+    };
+}
 
 /*
 * This is the real dynprogress that calls all available UI updates.
 */
-const dynprbar_action = changeProgressbar;
-const game_action = changeGAME;
-const complinfo_action = changeCompletionInfo;
-
 export const init = () => {
-    var prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
+    const prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
     const course_id = getCourseIdFromBody();
-
-    window.console.log('lcprogessuiups-- prbarneusrc' + prbar);
     if(prbar && course_id) {
+        // Add listener that dispatch cmcompleted events.
         window.console.log('lcprogessuiups-- livecoprogressuiups----load listener');
         listener();
-        } else {
+    } else {
         window.console.log('lcprogessuiups-- livecoprogressuiups----no listeners loaded due to missing prbar');
     }
 
     window.addEventListener('load', function () {
-        //var pr = document.getElementsByClassName('progress')[0];
-        var prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
-       // alert('pr' + pr);
-        window.console.log('lcprogessuiups-- prbarneusrc' + prbar);
         // Add an event listener to handle the cmcompleted - send from the local_livecoprogressuiups/listener.
         document.addEventListener('cmcompleted', function(event) {
             window.console.log('lcprogessuiups-- cmcompleted----Custom event triggered:', event.detail.message);
-            // one option to changeProgressbar or the other 2 Variants of dynprbar_action()
-            // implement wait 300 ms - to give some time to the core events dealing with the completion
+            // Implement wait 300 ms to give some time to the core events dealing with the completion.
              setTimeout(function() {
-                letthemagicbedone(course_id,get_theme_learnr_Progressbar_InnerHTML,selectors.progressbar.body);
-                //  dynprbar_action(); // The theme learnr progressbar.
-                complinfo_action(event); // The H5P completion section. Needs cmid as additional argument.
-                //  game_action(); // The GAME.
-                letthemagicbedone(course_id,get_block_Game_InnerHTML,selectors.game.body);
-            }, 300);
-        });
-    });
-};
-
-export const initWORKING = () => {
-    var prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
-
-    window.console.log('lcprogessuiups-- prbarneusrc' + prbar);
-    if(prbar) {
-        window.console.log('lcprogessuiups-- livecoprogressuiups----load listener');
-        listener();
-        } else {
-        window.console.log('lcprogessuiups-- livecoprogressuiups----no listeners loaded due to missing prbar');
-    }
-
-    window.addEventListener('load', function () {
-        //var pr = document.getElementsByClassName('progress')[0];
-        var prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
-       // alert('pr' + pr);
-        window.console.log('lcprogessuiups-- prbarneusrc' + prbar);
-        // Add an event listener to handle the cmcompleted - send from the local_livecoprogressuiups/listener.
-        document.addEventListener('cmcompleted', function(event) {
-            window.console.log('lcprogessuiups-- cmcompleted----Custom event triggered:', event.detail.message);
-            // one option to changeProgressbar or the other 2 Variants of dynprbar_action()
-            // implement wait 300 ms - to give some time to the core events dealing with the completion
-             setTimeout(function() {
-                dynprbar_action(); // The theme learnr progressbar.
-                complinfo_action(event); // The H5P completion section.
-                game_action(); // The GAME.
+                // The theme_learnr_progressbar.
+                letthemagicbedone(course_id,get_theme_learnr_Progressbar_InnerHTML,selectors.progressbar.class);
+                // The H5P completion section. Needs some more arguments to do the magic.
+                modify_Activityinformation(course_id,event);
+                // The block_game.
+                letthemagicbedone(course_id,get_block_Game_InnerHTML,selectors.game.class);
             }, 300);
         });
     });

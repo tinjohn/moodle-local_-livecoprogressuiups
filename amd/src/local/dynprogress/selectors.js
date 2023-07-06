@@ -23,12 +23,13 @@
 
 export default {
         progressbar: {
-            body: 'progress courseview',
+            class: 'progress courseview',
+            qselector: 'div.progress.courseview',
         },
         game: {
-            body: 'gameTable',
+            class: 'gameTable',
         },
         activityinfo: {
-            body: 'div[data-region="activity-information"]',
+            qselector: 'div[data-region="activity-information"]',
         },
 };
