@@ -54,11 +54,129 @@ function getCourseIdFromBody() {
         return false;
     }
 }
+
+/**
+ *
+ * @param {*} course_id
+ * @returns Promise
+ */
+async function promise_get_theme_learnr_Progressbar_InnerHTM(course_id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await get_theme_learnr_Progressbar_InnerHTML(course_id);
+        if (response && response.innerHTML) {
+          resolve(response.innerHTML);
+        } else {
+          reject(response);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+}
+
+/**
+ *
+ * @param {*} innerHTML
+ */
+// function modifyDOMWORKS(innerHTML) {
+//     const prcourseview = document.getElementsByClassName(selectors.progressbar.body)[0];
+//     var elementToReplace = prcourseview;
+//      // Creates additional div but the parent node might have siblings just to be safe.
+//      const newElement = document.createElement('div');
+//     newElement.innerHTML = innerHTML;
+//     const parentElement = elementToReplace.parentNode;
+//     parentElement.replaceChild(newElement, elementToReplace);
+// }
+
+
+/**
+ *
+ * @param {*} aselector
+ */
+function modifyDOM(aselector) {
+    // The callback function onResolve holds the promise return value.
+    // That way the additional aselector argument mandatory for modifyDOM and the promise value are accessible.
+    return function onResolve(innerHTML) {
+        const elementToReplace = document.getElementsByClassName(aselector)[0];
+        if(elementToReplace) {
+            window.console.log("---modifyDOM--", aselector);
+            // Creates an additional div but the parent node might have siblings - just to be safe.
+            const newElement = document.createElement('div');
+            newElement.innerHTML = innerHTML;
+            const parentElement = elementToReplace.parentNode;
+            parentElement.replaceChild(newElement, elementToReplace);
+        }
+    };
+  }
+
+/**
+ *
+ * @param {*} getinnerhtmlfunc
+ * @param {*} course_id
+ * @returns
+ */
+async function promise_get_InnerHTM(getinnerhtmlfunc,course_id) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await getinnerhtmlfunc(course_id);
+        if (response && response.innerHTML) {
+          resolve(response.innerHTML);
+        } else {
+          reject(response);
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+}
+
+/**
+ *
+ * @param {*} err
+ */
+function onError(err) {
+    window.console.log("--ERROR: ", err);
+}
+
+export const changeProgressbar = () => {
+    const course_id = getCourseIdFromBody();
+    if(course_id) {
+        promise_get_InnerHTM(get_theme_learnr_Progressbar_InnerHTML,course_id)
+            .then(modifyDOM(selectors.progressbar.body))
+            .catch(onError);
+    }
+};
+
+export const letthemagicbedone = (course_id,servicefunc,selector) => {
+        promise_get_InnerHTM(servicefunc,course_id)
+            .then(modifyDOM(selector))
+            .catch(onError);
+};
+
+export const changeProgressbarPROMISE_PARAMS_WORKS = () => {
+    const course_id = getCourseIdFromBody();
+    if(course_id) {
+        promise_get_InnerHTM(get_theme_learnr_Progressbar_InnerHTML,course_id)
+            .then(modifyDOM)
+            .catch(onError);
+    }
+};
+
+export const changeProgressbarPROMISEWORKS = () => {
+    const course_id = getCourseIdFromBody();
+    if(course_id) {
+        promise_get_theme_learnr_Progressbar_InnerHTM(course_id)
+            .then(modifyDOM)
+            .catch(onError);
+    }
+};
+
 /*
 * Reloads whole progressbar DOM element - it is not as smooth as just changing width.
 * On the other hand - the progress bar is correct and overall up-to-date.
 */
-export const changeProgressbar = async() => {
+export const changeProgressbarWORKS = async() => {
     // ...
     //const prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
     //const course_id = prbar.getAttribute('courseid');
@@ -174,6 +292,39 @@ const game_action = changeGAME;
 const complinfo_action = changeCompletionInfo;
 
 export const init = () => {
+    var prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
+    const course_id = getCourseIdFromBody();
+
+    window.console.log('lcprogessuiups-- prbarneusrc' + prbar);
+    if(prbar && course_id) {
+        window.console.log('lcprogessuiups-- livecoprogressuiups----load listener');
+        listener();
+        } else {
+        window.console.log('lcprogessuiups-- livecoprogressuiups----no listeners loaded due to missing prbar');
+    }
+
+    window.addEventListener('load', function () {
+        //var pr = document.getElementsByClassName('progress')[0];
+        var prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
+       // alert('pr' + pr);
+        window.console.log('lcprogessuiups-- prbarneusrc' + prbar);
+        // Add an event listener to handle the cmcompleted - send from the local_livecoprogressuiups/listener.
+        document.addEventListener('cmcompleted', function(event) {
+            window.console.log('lcprogessuiups-- cmcompleted----Custom event triggered:', event.detail.message);
+            // one option to changeProgressbar or the other 2 Variants of dynprbar_action()
+            // implement wait 300 ms - to give some time to the core events dealing with the completion
+             setTimeout(function() {
+                letthemagicbedone(course_id,get_theme_learnr_Progressbar_InnerHTML,selectors.progressbar.body);
+                //  dynprbar_action(); // The theme learnr progressbar.
+                complinfo_action(event); // The H5P completion section. Needs cmid as additional argument.
+                //  game_action(); // The GAME.
+                letthemagicbedone(course_id,get_block_Game_InnerHTML,selectors.game.body);
+            }, 300);
+        });
+    });
+};
+
+export const initWORKING = () => {
     var prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
 
     window.console.log('lcprogessuiups-- prbarneusrc' + prbar);
