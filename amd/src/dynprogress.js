@@ -66,74 +66,85 @@ function getCourseIdFromBody() {
  * @param {*} element by default document
  */
 function replaceDOM(selectorclass, element = document) {
-    // The callback function onResolve holds the promise return value.
-    // That way the additional selectorclass argument mandatory for replaceDOM and the promise value are accessible.
-    return function onResolve(innerHTML) {
-        const elementToReplace = element.getElementsByClassName(selectorclass)[0];
-        if(elementToReplace) {
-            window.console.log("---replaceDOM--", selectorclass);
-            // Creates an additional div but the parent node might have siblings - just to be safe.
-            const newElement = document.createElement('div');
-            newElement.innerHTML = innerHTML;
-            const parentElement = elementToReplace.parentNode;
-            parentElement.replaceChild(newElement, elementToReplace);
-        }
+    return async function onResolve(innerHTML) {
+      const elementToReplace = element.getElementsByClassName(selectorclass)[0];
+      if (elementToReplace) {
+        window.console.log("---replaceDOM--", selectorclass);
+        const newElement = document.createElement('div');
+        newElement.innerHTML = innerHTML;
+        const parentElement = elementToReplace.parentNode;
+        parentElement.replaceChild(newElement, elementToReplace);
+      }
     };
   }
 
-
-/**
- * Takes a function that returns a string, that must contain an innerHTML attribute,
- * that contains a string of an innerHTML.
- * The function is async called due to the fact that the function might be a webservice.
+ /**
+ * Modifies the whole DOM elements innerHTML looked for by the given selectorq
+ * and the element to start from.
  *
- * @param {*} getinnerhtmlfunc
- * @param {*} course_id
- * @param {*} options
- * @returns Promise with innerHTML string
+ * @param {*} selectorq
+ * @param {*} element
  */
-async function promise_get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let response;
-        if (options.cmid) {
-            response = await getinnerhtmlfunc(course_id, options.cmid);
-        } else {
-            response = await getinnerhtmlfunc(course_id);
-        }
-        if (response && response.innerHTML) {
-          resolve(response.innerHTML);
-        } else {
-          reject(response);
-        }
-      } catch (error) {
-        reject(error);
+function modifyDOM(selectorq,element = document) {
+    return async function onResolve(innerHTML) {
+        window.console.log("---modifyDOM--", selectorq);
+        var selelement = element.querySelector(selectorq);
+        selelement.innerHTML = innerHTML;
+    };
+}
+
+
+  /**
+   * Takes a function that returns a string, that must contain an innerHTML attribute,
+   * that contains a string of an innerHTML.
+   * The function is async called due to the fact that the function might be a webservice.
+   *
+   * @param {*} getinnerhtmlfunc
+   * @param {*} course_id
+   * @param {*} options
+   * @returns innerHTML string
+   */
+  async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
+    try {
+      let response;
+      if (options.cmid) {
+        response = await getinnerhtmlfunc(course_id, options.cmid);
+      } else {
+        response = await getinnerhtmlfunc(course_id);
       }
-    });
-}
+      if (response && response.innerHTML) {
+        return response.innerHTML;
+      } else {
+        throw response;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 
-/**
- * Puts an error message to console.
- * @param {*} err
- */
-function onError(err) {
+  /**
+   * Puts an error message to console.
+   * @param {*} err
+   */
+  function onError(err) {
     window.console.log("--ERROR: ", err);
-}
+  }
 
-
-/**
- * Gets the innerHTML from the given (service) function (servicefunc).
- * Replaces the DOM element based on the selector given.
- * @param {*} course_id
- * @param {*} servicefunc
- * @param {*} selector
- */
-export const letthemagicbedone = (course_id,servicefunc,selector) => {
-        promise_get_InnerHTML(servicefunc,course_id)
-            .then(replaceDOM(selector))
-            .catch(onError);
-};
-
+  /**
+   * Gets the innerHTML from the given (service) function (servicefunc).
+   * Replaces the DOM element based on the selector given.
+   * @param {*} course_id
+   * @param {*} servicefunc
+   * @param {*} selector
+   */
+  export const letthemagicbedone = async (course_id, servicefunc, selector) => {
+    try {
+      const innerHTML = await get_InnerHTML(servicefunc, course_id);
+      await replaceDOM(selector)(innerHTML);
+    } catch (error) {
+      onError(error);
+    }
+  };
 
 /**
  * Function extracts cmid from the given DOM elements that holds the information.
@@ -164,7 +175,7 @@ const getCmid = (liidelement) => {
  * @param {*} course_id
  * @param {*} event
  */
-const modify_Activityinformation = (course_id,event) => {
+const modify_Activityinformation = async (course_id,event) => {
     window.console.log('lcprogessuiups----themagic_Activityinformation--event',event);
     if (event && event.detail) {
         if(event.detail.completionType && event.detail.completionType == 'H5Pscored') {
@@ -175,9 +186,12 @@ const modify_Activityinformation = (course_id,event) => {
                 // [id="childElementID"]');
                 var element = eventtarget.closest('li > div');
                 const cmid = getCmid(eventtarget.closest('li'));
-                promise_get_InnerHTML(get_H5P_ActivityInformation_InnerHTML, course_id, { cmid: cmid })
-                    .then(modifyDOM(selectors.activityinfo.qselector,element))
-                    .catch(onError);
+                try {
+                    const innerHTML = await get_InnerHTML(get_H5P_ActivityInformation_InnerHTML, course_id, { cmid: cmid });
+                    await modifyDOM(selectors.activityinfo.qselector,element)(innerHTML);
+                } catch (error) {
+                        onError(error);
+                }
             } else {
                 window.console.log("lcprogessuiups-- no DOM for ActivityInformation in event");
             }
@@ -188,20 +202,6 @@ const modify_Activityinformation = (course_id,event) => {
     return true;
 };
 
-/**
- * Modifies the whole DOM elements innerHTML looked for by the given selectorq
- * and the element to start from.
- *
- * @param {*} selectorq
- * @param {*} element
- */
-function modifyDOM(selectorq,element = document) {
-    return function onResolve(innerHTML) {
-        window.console.log("---modifyDOM--", selectorq);
-        var selelement = element.querySelector(selectorq);
-        selelement.innerHTML = innerHTML;
-    };
-}
 
 /*
 * This is the real dynprogress that calls all available UI updates.
