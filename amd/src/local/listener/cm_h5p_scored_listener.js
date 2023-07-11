@@ -45,7 +45,7 @@ export const init = () => {
     const handleXAPIEvent = function (event) {
         if (event && event.data && event.data.statement && event.data.statement.result) {
             if (event.data.statement.result.score && event.data.statement.result.score.scaled) {
-                window.console.log('lcprogessuiups-- --externalDispatcher-handleXAPIEvent-', event);
+                // window.console.log('lcprogessuiups-- --externalDispatcher-handleXAPIEvent-', event);
                 const theiframe = this.frameElement;
                 // Create and trigger the cmcompleted event listened by dynprogress.
                 var cmcompletedEvent = new CustomEvent('cmcompleted',

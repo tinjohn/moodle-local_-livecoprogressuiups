@@ -46,7 +46,7 @@ function getCourseIdFromBody() {
         if (matches) {
             const courseNumber = matches[0];
             courseid = courseNumber.split('-')[1];
-            window.console.log("lcprogessuiups-- Coursenumber------", courseid);
+            // window.console.log("lcprogessuiups-- Coursenumber------", courseid);
             return (courseid);
         }
     });
@@ -160,7 +160,7 @@ const getCmid = (liidelement) => {
     if (matches) {
         const courseNumber = matches[0];
         courseid = courseNumber.split('-')[1];
-        window.console.log("lcprogessuiups-- cmid------", courseid); // Output: module-341
+        // window.console.log("lcprogessuiups-- cmid------", courseid); // Output: module-341
         return (courseid);
     }
 };
@@ -176,14 +176,12 @@ const getCmid = (liidelement) => {
  * @param {*} event
  */
 const modify_Activityinformation = async (course_id, event) => {
-    window.console.log('lcprogessuiups----themagic_Activityinformation--event', event);
+   // window.console.log('lcprogessuiups----themagic_Activityinformation--event', event);
     if (event && event.detail) {
         if (event.detail.completionType && event.detail.completionType == 'H5Pscored') {
             if (event.detail.framedin) {
                 const eventtarget = event.detail.framedin;
-                window.console.log('lcprogessuiups-- eventtarget', eventtarget);
-                // var parentElement = document.querySelector('div[data-region="completion-info"]
-                // [id="childElementID"]');
+                // window.console.log('lcprogessuiups-- eventtarget', eventtarget);
                 var element = eventtarget.closest('li > div');
                 const cmid = getCmid(eventtarget.closest('li'));
                 try {
@@ -193,10 +191,10 @@ const modify_Activityinformation = async (course_id, event) => {
                     onError(error);
                 }
             } else {
-                window.console.log("lcprogessuiups-- no DOM for ActivityInformation in event");
+                // window.console.log("lcprogessuiups-- no DOM for ActivityInformation in event");
             }
         } else {
-            window.console.log("lcprogessuiups-- no H5Pscored completionType in event");
+            // window.console.log("lcprogessuiups-- no H5Pscored completionType in event");
         }
     }
     return true;
@@ -211,16 +209,16 @@ export const init = () => {
     const course_id = getCourseIdFromBody();
     if (prbar && course_id) {
         // Add listener that dispatch cmcompleted events.
-        window.console.log('lcprogessuiups-- livecoprogressuiups----load listener');
+        // window.console.log('lcprogessuiups-- livecoprogressuiups----load listener');
         listener();
     } else {
-        window.console.log('lcprogessuiups-- livecoprogressuiups----no listeners loaded due to missing prbar');
+        // window.console.log('lcprogessuiups-- livecoprogressuiups----no listeners loaded due to missing prbar');
     }
 
     window.addEventListener('load', function () {
         // Add an event listener to handle the cmcompleted - send from the local_livecoprogressuiups/listener.
         document.addEventListener('cmcompleted', function (event) {
-            window.console.log('lcprogessuiups-- cmcompleted----Custom event triggered:', event.detail.message);
+            // window.console.log('lcprogessuiups-- cmcompleted----Custom event triggered:', event.detail.message);
             // Implement wait 300 ms to give some time to the core events dealing with the completion.
             setTimeout(function () {
                 // The theme_learnr_progressbar.
