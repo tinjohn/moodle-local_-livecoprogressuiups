@@ -22,14 +22,14 @@
  */
 
 export default {
-        progressbar: {
-            class: 'progress courseview',
-            qselector: 'div.progress.courseview',
-        },
-        game: {
-            class: 'gameTable',
-        },
-        activityinfo: {
-            qselector: 'div[data-region="activity-information"]',
-        },
+    progressbar: {
+        class: 'progress courseview',
+        qselector: 'div.progress.courseview',
+    },
+    game: {
+        class: 'gameTable',
+    },
+    activityinfo: {
+        qselector: 'div[data-region="activity-information"]',
+    },
 };

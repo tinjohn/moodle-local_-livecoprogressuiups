@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {call as fetchMany} from 'core/ajax';
+import { call as fetchMany } from 'core/ajax';
 
 // DO NOT USE FOR AJAX
 export const getActivityCompletion = (
@@ -38,35 +38,34 @@ export const getActivityCompletion = (
 
 export const getProgressPercentage = (
     courseid,
-//    userid,
+    //    userid,
 ) => fetchMany([{
     methodname: 'local_livecoprogressuiups_get_progress_percentage',
     args: {
         courseid,
-//        userid,
+        //        userid,
     },
 }])[0];
 
 export const get_theme_learnr_Progressbar_InnerHTML = (
     courseid,
-//    userid,
+    //    userid,
 ) => fetchMany([{
     methodname: 'local_livecoprogressuiups_get_progressbar_innerhtml',
     args: {
         courseid,
-//        userid,
+        //        userid,
     },
 }])[0];
 
-
 export const get_block_Game_InnerHTML = (
     courseid,
-//    userid,
+    //    userid,
 ) => fetchMany([{
     methodname: 'local_livecoprogressuiups_get_progressbar_innerhtml_game',
     args: {
         courseid,
-//        userid,
+        //        userid,
     },
 }])[0];
 
@@ -80,10 +79,3 @@ export const get_H5P_ActivityInformation_InnerHTML = (
         cmid,
     },
 }])[0];
-
-
-
-
-
-
-

@@ -13,7 +13,7 @@ echo_readme();
   *
   */
 function echo_readme() {
-     global $DB;
+    global $DB;
 
-     echo "livecoprogressuiups stellt ein js zur Verfügung, dass die Progressbar z.Bsp. im theme learnR dynamisch macht. Das könnte man auch direkt im Theme machen." ;
+    echo "livecoprogressuiups" ;
 }

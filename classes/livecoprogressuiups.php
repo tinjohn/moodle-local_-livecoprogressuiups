@@ -32,5 +32,3 @@ class livecoprogressuiups {
             $PAGE->requires->js_call_amd('local_livecoprogressuiups/dynprogress', 'init');            
     }
 }
-
-

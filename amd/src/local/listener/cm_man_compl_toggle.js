@@ -40,9 +40,9 @@ export const init = () => {
     }
     // Listen for toggled manual completion states of activities.
     document.addEventListener(CourseEvents.manualCompletionToggled, () => {
+        // Create and trigger the custom event
         var cmcompletedEvent = new CustomEvent('cmcompleted',
-        { detail: { message: 'a course module completed or scored' } });
-        // Trigger the custom event
+            { detail: { message: 'a course module completed or scored' } });
         document.dispatchEvent(cmcompletedEvent);
     });
     registered = true;

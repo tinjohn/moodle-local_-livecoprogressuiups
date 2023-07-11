@@ -46,7 +46,6 @@ class local_livecoprogressuiups_external_theme_learnr_progressbar extends local_
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, 'Course ID'),
-               // 'userid'   => new external_value(PARAM_INT, 'User ID'),
             )
         );
     }

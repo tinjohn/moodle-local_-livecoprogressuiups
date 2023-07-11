@@ -86,7 +86,7 @@ class local_livecoprogressuiups_external_h5p_activityinformation extends local_l
             $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
             $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
             $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id, $showcompletionconditions);
-            // Maybe we should use the completion_info class to chekc for completion initally
+            // Maybe we should use the completion_info class to check for completion initally
             // $complinfo = new completion_info($course);
             // $completionstate = $complinfo->get_core_completion_state($cminfo, $userid);
 
@@ -117,8 +117,6 @@ class local_livecoprogressuiups_external_h5p_activityinformation extends local_l
             )
         );
     }
-
-
 }
 
 
