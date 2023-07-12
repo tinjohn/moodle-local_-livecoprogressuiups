@@ -119,7 +119,7 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         if (response && response.innerHTML) {
             return response.innerHTML;
         } else {
-            throw response;
+            throw new Error('in get_InnerHTML - no response.innerHTML found.');
         }
     } catch (error) {
         throw new Error('in get_InnerHTML', error);
