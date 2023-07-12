@@ -36,6 +36,7 @@ import selectors from 'local_livecoprogressuiups/local/dynprogress/selectors';
  * @returns courseid or false.
  */
 function getCourseIdFromBody() {
+    window.console.log("getCourseIdFromBody-- Coursenumber------", courseid);
     const bodyTag = document.getElementsByTagName('body')[0];
     const attributeNames = bodyTag.getAttributeNames();
     var courseid;
