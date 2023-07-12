@@ -66,6 +66,7 @@ function getCourseIdFromBody() {
  * @param {*} element by default document
  */
 function replaceDOM(selectorclass, element = document) {
+    window.console.log("in replaceDOM", selectorclass);
     return async function onResolve(innerHTML) {
         const elementToReplace = element.getElementsByClassName(selectorclass)[0];
         if (elementToReplace) {
@@ -105,6 +106,7 @@ function modifyDOM(selectorq, element = document) {
  * @returns innerHTML string
  */
 async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
+    window.console.log("get_InnerHTML", getinnerhtmlfunc);
     try {
         let response;
         if (options.cmid) {
@@ -140,6 +142,7 @@ function onError(err) {
 export const letthemagicbedone = async (course_id, servicefunc, selector) => {
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id);
+        window.console.log("innerHTML:", innerHTML );
         await replaceDOM(selector)(innerHTML);
     } catch (error) {
         onError(error);
