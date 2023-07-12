@@ -107,13 +107,14 @@ function modifyDOM(selectorq, element = document) {
  * @returns innerHTML string
  */
 async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
-    window.console.log("get_InnerHTML", getinnerhtmlfunc);
     try {
         let response;
         if (options.cmid) {
             response = await getinnerhtmlfunc(course_id, options.cmid);
         } else {
+            window.console.log("in get_InnerHTML", getinnerhtmlfunc);
             response = await getinnerhtmlfunc(course_id);
+            window.console.log("response get_InnerHTML", response);
         }
         window.console.log("get_InnerHTML", response);
         if (response && response.innerHTML) {
