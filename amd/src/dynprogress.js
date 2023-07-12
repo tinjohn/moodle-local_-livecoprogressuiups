@@ -46,7 +46,7 @@ function getCourseIdFromBody() {
         if (matches) {
             const courseNumber = matches[0];
             courseid = courseNumber.split('-')[1];
-            // window.console.log("lcprogessuiups-- Coursenumber------", courseid);
+            window.console.log("lcprogessuiups-- Coursenumber------", courseid);
             return (courseid);
         }
     });
@@ -114,6 +114,7 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         } else {
             response = await getinnerhtmlfunc(course_id);
         }
+        window.console.log("get_InnerHTML", response);
         if (response && response.innerHTML) {
             return response.innerHTML;
         } else {
@@ -142,7 +143,7 @@ function onError(err) {
 export const letthemagicbedone = async (course_id, servicefunc, selector) => {
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id);
-        window.console.log("innerHTML:", innerHTML );
+        window.console.log("letthemagicbedone:", innerHTML );
         await replaceDOM(selector)(innerHTML);
     } catch (error) {
         onError(error);
