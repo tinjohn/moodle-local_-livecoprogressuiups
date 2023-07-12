@@ -122,7 +122,7 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
             throw response;
         }
     } catch (error) {
-        throw error;
+        throw new Error('in get_InnerHTML', error);
     }
 }
 
@@ -147,7 +147,7 @@ export const letthemagicbedone = async (course_id, servicefunc, selector) => {
         window.console.log("letthemagicbedone:", innerHTML );
         await replaceDOM(selector)(innerHTML);
     } catch (error) {
-        onError(error);
+        onError("letthemagicbedone",error);
     }
 };
 
