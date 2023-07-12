@@ -71,7 +71,7 @@ class local_livecoprogressuiups_external_theme_learnr_progressbar extends local_
                 //'userid'   => $userid,
             );
 
-            $params = self::validate_parameters(self::get_progress_percentage_parameters(), $arrayparams);
+            $params = self::validate_parameters(self::get_progressbar_innerhtml_parameters(), $arrayparams);
 
             $course = get_course($params['courseid']);
 
