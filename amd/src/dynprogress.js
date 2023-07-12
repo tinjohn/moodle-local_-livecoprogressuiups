@@ -118,11 +118,14 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         }
         window.console.log("get_InnerHTML", response);
         if (response && response.innerHTML) {
+            window.console.log("returne innerHTML get_InnerHTML");
             return response.innerHTML;
         } else {
+            window.console.log("returne get_InnerHTML error");
             throw new Error('in get_InnerHTML - no response.innerHTML found.');
         }
     } catch (error) {
+        window.console.log("returne get_InnerHTML catched error");
         throw new Error('in get_InnerHTML', error);
     }
 }
