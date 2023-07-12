@@ -10,7 +10,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_livecoprogressuiups'; // Declare the type and name of this plugin.
-$plugin->version = 2023071100; // Plugin released on .
+$plugin->version = 2023071200; // Plugin released on .
 $plugin->requires = 2022041908; // Moodle 4.1 is required.
 $plugin->maturity = MATURITY_STABLE; // This is considered as ALPHA for production sites.
-$plugin->release = 'v1.0.0'; // This is our first.
+$plugin->release = 'v1.0.1'; // This is our first.

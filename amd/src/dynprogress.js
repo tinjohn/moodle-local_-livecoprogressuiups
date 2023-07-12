@@ -145,9 +145,7 @@ export const letthemagicbedone = async (course_id, servicefunc, selector) => {
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id);
         window.console.log("letthemagicbedone:", innerHTML );
-        if(innerHTML == 'good') {
-             await replaceDOM(selector)(innerHTML);
-        }
+        await replaceDOM(selector)(innerHTML);
     } catch (error) {
         onError("letthemagicbedone",error);
     }
