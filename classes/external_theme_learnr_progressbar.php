@@ -80,9 +80,9 @@ class local_livecoprogressuiups_external_theme_learnr_progressbar extends local_
 
             // needs to be an option
             $renderer = new theme_learnr\output\core_renderer($PAGE,$USER->id);
-            // $progressBar = $renderer->courseprogressbar();
+            $progressBar = $renderer->courseprogressbar();
             // if($progressBar == '') {
-                $progressBar = '<div> returns empty'.$renderer.' </div>';
+                $progressBar = '<div> returns empty </div>';
             //}
                 
             $results = array(
