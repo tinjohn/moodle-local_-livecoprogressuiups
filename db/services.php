@@ -53,9 +53,9 @@ $functions = array(
         'ajax' => true,
     ),
 
-    'local_livecoprogressuiups_get_progressbar_innerhtml_game' => array(
+    'local_livecoprogressuiups_get_game_innerhtml' => array(
         'classname' => 'local_livecoprogressuiups_external_block_game',
-        'methodname' => 'get_progressbar_innerhtml_game',
+        'methodname' => 'get_game_innerhtml',
         'description' => 'Return the game html.',
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),

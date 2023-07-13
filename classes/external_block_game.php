@@ -42,7 +42,7 @@ class local_livecoprogressuiups_external_block_game extends local_livecoprogress
      * @return external_function_parameters
      * @since Moodle 2.9
      */
-    public static function get_progressbar_innerhtml_game_parameters() {
+    public static function get_game_innerhtml_parameters() {
         return new external_function_parameters(
             array(
                 'courseid' => new external_value(PARAM_INT, 'Course ID'),
@@ -60,7 +60,7 @@ class local_livecoprogressuiups_external_block_game extends local_livecoprogress
      * @since Moodle 4.1
      * @throws moodle_exception
      */
-    public static function get_progressbar_innerhtml_game($courseid) {
+    public static function get_game_innerhtml($courseid) {
         global $CFG, $USER, $PAGE, $COURSE;
 
         require_once($CFG->dirroot . '/blocks/game/lib.php');
@@ -79,7 +79,7 @@ class local_livecoprogressuiups_external_block_game extends local_livecoprogress
                 //'userid'   => $userid,
             );
 
-            $params = self::validate_parameters(self::get_progressbar_innerhtml_game_parameters(), $arrayparams);
+            $params = self::validate_parameters(self::get_game_innerhtml_parameters(), $arrayparams);
 
             $course = get_course($params['courseid']);
 
@@ -107,7 +107,7 @@ class local_livecoprogressuiups_external_block_game extends local_livecoprogress
      * @return external_description
      * @since Moodle 2.9
      */
-    public static function get_progressbar_innerhtml_game_returns() {
+    public static function get_game_innerhtml_returns() {
         return new external_single_structure(
             array(
                 'innerHTML' =>  new external_value(PARAM_RAW, 'innerHTML for block game'),
@@ -115,92 +115,6 @@ class local_livecoprogressuiups_external_block_game extends local_livecoprogress
             )
         );
     }
-
-    ////
-
-    /**
-     * Returns description of method parameters
-     *
-     * @return external_function_parameters
-     * @since Moodle 2.9
-     */
-    public static function get_activity_information_innerhtml_parameters() {
-        return new external_function_parameters(
-            array(
-                'courseid' => new external_value(PARAM_INT, 'Course ID'),
-                'cmid' => new external_value(PARAM_INT, 'cm ID'),
-               // 'userid'   => new external_value(PARAM_INT, 'User ID'),
-            )
-        );
-    }
-
-    /**
-     * Resets the activity_information via exchange of innerhtml
-     *
-     * @param int $courseid ID of the Course
-     * @return int progress in percentage
-     * @throws moodle_exception
-     * @since Moodle 4.1
-     * @throws moodle_exception
-     */
-    public static function get_activity_information_innerhtml($courseid, $cmid) {
-        global $CFG, $USER, $PAGE, $COURSE;
-
-        require_once($CFG->libdir . '/completionlib.php');
-        require_once($CFG->libdir . '/filelib.php' );
-
-
-            $warnings = [];
-            $arrayparams = array(
-                'courseid' => $courseid,
-                'cmid' => $cmid,
-            );
-
-            $params = self::validate_parameters(self::get_activity_information_innerhtml_parameters(), $arrayparams);
-
-            $course = get_course($params['courseid']);
-
-            $context = context_course::instance($course->id);
-            self::validate_context($context);
-
-            // Make sure we're using a cm_info object.
-            $cminfo = get_fast_modinfo($courseid)->get_cm($cmid);
-            $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-            $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
-            $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id, $showcompletionconditions);
-            // Maybe we should use the completion_info class to chekc for completion initally
-            // $complinfo = new completion_info($course);
-            // $completionstate = $complinfo->get_core_completion_state($cminfo, $userid);
-
-            $renderer = $PAGE->get_renderer('core', 'course');
-            $activityinfo = $renderer->activity_information($cminfo, $completiondetails, $activitydates);
-            //$innerhtml = $renderer->render($activityinfo);
-            $innerhtml = $activityinfo;
-
-            //$innerhtml = "<div>Service attached</div>"; 
-            $results = array(
-                'innerHTML' => $innerhtml,
-                'warnings' => $warnings,
-            );
-            return $results;
-    }
-
-    /**
-     * Returns description of method result value
-     *
-     * @return external_description
-     * @since Moodle 2.9
-     */
-    public static function get_activity_information_innerhtml_returns() {
-        return new external_single_structure(
-            array(
-                'innerHTML' =>  new external_value(PARAM_RAW, 'innerHTML for block game'),
-                'warnings' => new external_warnings()
-            )
-        );
-    }
-
-
 }
 
 

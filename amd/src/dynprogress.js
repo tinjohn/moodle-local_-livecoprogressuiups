@@ -114,10 +114,12 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         if (response && response.innerHTML) {
             return response.innerHTML;
         } else {
-            throw new Error('in Webservice - no response.innerHTML found.');
+            var errMsg = `in Webservice - no response.innerHTML found.`;
+            throw errMsg;
         }
     } catch (error) {
-        throw new Error('in Webservice: ', error);
+        var errMsg = `in Webservice: - servicefunc: ${getinnerhtmlfunc}, error: ${error}`;
+        throw errMsg;
     }
 }
 
@@ -141,7 +143,8 @@ export const letthemagicbedone = async (course_id, servicefunc, selector) => {
         const innerHTML = await get_InnerHTML(servicefunc, course_id);
         await replaceDOM(selector)(innerHTML);
     } catch (error) {
-        onError("Something went wrong rewriting DOM Element: ",error);
+        const errMsg = `Something went wrong rewriting a DOM Element - servicefunc: ${servicefunc}, error: ${error}`;
+        onError(errMsg);
     }
 };
 
@@ -159,7 +162,7 @@ const getCmid = (liidelement) => {
     if (matches) {
         const courseNumber = matches[0];
         courseid = courseNumber.split('-')[1];
-        // window.console.log("lcprogessuiups-- cmid------", courseid); // Output: module-341
+        // window.console.log("lcprogessuiups-- cmid------", courseid);
         return (courseid);
     }
 };
@@ -175,7 +178,6 @@ const getCmid = (liidelement) => {
  * @param {*} event
  */
 const modify_Activityinformation = async (course_id, event) => {
-   // window.console.log('lcprogessuiups----themagic_Activityinformation--event', event);
     if (event && event.detail) {
         if (event.detail.completionType && event.detail.completionType == 'H5Pscored') {
             if (event.detail.framedin) {

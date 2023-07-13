@@ -62,7 +62,7 @@ export const get_block_Game_InnerHTML = (
     courseid,
     //    userid,
 ) => fetchMany([{
-    methodname: 'local_livecoprogressuiups_get_progressbar_innerhtml_game',
+    methodname: 'local_livecoprogressuiups_get_game_innerhtml',
     args: {
         courseid,
         //        userid,
