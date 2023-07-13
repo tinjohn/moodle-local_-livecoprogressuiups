@@ -78,12 +78,13 @@ class local_livecoprogressuiups_external_theme_learnr_progressbar extends local_
             $context = context_course::instance($course->id);
             self::validate_context($context);
 
-            // needs to be an option
             $renderer = new theme_learnr\output\core_renderer($PAGE,$USER->id);
+            // Page layout not set in Web Service, Servoice was called from the Course, 
+            // thus it is save setting it to course. 
+            $PAGE->set_pagelayout('course');
+
             $progressBar = $renderer->courseprogressbar();
-            // if($progressBar == '') {
-                $progressBar = '<div> returns empty' . $progressBar . '</div>';
-            //}
+            $progressBar = $progressBar;
                 
             $results = array(
                 'innerHTML' => $progressBar,
