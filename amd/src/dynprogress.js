@@ -36,7 +36,6 @@ import selectors from 'local_livecoprogressuiups/local/dynprogress/selectors';
  * @returns courseid or false.
  */
 function getCourseIdFromBody() {
-    window.console.log("getCourseIdFromBody-- Coursenumber------", courseid);
     const bodyTag = document.getElementsByTagName('body')[0];
     const attributeNames = bodyTag.getAttributeNames();
     var courseid;
@@ -47,7 +46,6 @@ function getCourseIdFromBody() {
         if (matches) {
             const courseNumber = matches[0];
             courseid = courseNumber.split('-')[1];
-            window.console.log("lcprogessuiups-- Coursenumber------", courseid);
             return (courseid);
         }
     });
@@ -67,11 +65,10 @@ function getCourseIdFromBody() {
  * @param {*} element by default document
  */
 function replaceDOM(selectorclass, element = document) {
-    window.console.log("in replaceDOM", selectorclass);
     return async function onResolve(innerHTML) {
         const elementToReplace = element.getElementsByClassName(selectorclass)[0];
         if (elementToReplace) {
-            window.console.log("---replaceDOM--", selectorclass);
+            // window.console.log("---replaceDOM--", selectorclass);
             const newElement = document.createElement('div');
             newElement.innerHTML = innerHTML;
             const parentElement = elementToReplace.parentNode;
@@ -89,7 +86,7 @@ function replaceDOM(selectorclass, element = document) {
 */
 function modifyDOM(selectorq, element = document) {
     return async function onResolve(innerHTML) {
-        window.console.log("---modifyDOM--", selectorq);
+        // window.console.log("---modifyDOM--", selectorq);
         var selelement = element.querySelector(selectorq);
         selelement.innerHTML = innerHTML;
     };
@@ -112,21 +109,15 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         if (options.cmid) {
             response = await getinnerhtmlfunc(course_id, options.cmid);
         } else {
-            window.console.log("in get_InnerHTML", getinnerhtmlfunc);
             response = await getinnerhtmlfunc(course_id);
-            window.console.log("response get_InnerHTML", response);
         }
-        window.console.log("get_InnerHTML", response);
         if (response && response.innerHTML) {
-            window.console.log("returne innerHTML get_InnerHTML");
             return response.innerHTML;
         } else {
-            window.console.log("returne get_InnerHTML error");
-            throw new Error('in get_InnerHTML - no response.innerHTML found.');
+            throw new Error('in Webservice - no response.innerHTML found.');
         }
     } catch (error) {
-        window.console.log("returne get_InnerHTML catched error");
-        throw new Error('in get_InnerHTML', error);
+        throw new Error('in Webservice: ', error);
     }
 }
 
@@ -135,7 +126,7 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
  * @param {*} err
  */
 function onError(err) {
-    window.console.log("--ERROR: ", err);
+    window.console.log("--ERROR ", err);
 }
 
 /**
@@ -148,10 +139,9 @@ function onError(err) {
 export const letthemagicbedone = async (course_id, servicefunc, selector) => {
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id);
-        window.console.log("letthemagicbedone:", innerHTML );
         await replaceDOM(selector)(innerHTML);
     } catch (error) {
-        onError("letthemagicbedone",error);
+        onError("Something went wrong rewriting DOM Element: ",error);
     }
 };
 
