@@ -13,4 +13,4 @@ $plugin->component = 'local_livecoprogressuiups'; // Declare the type and name o
 $plugin->version = 2023092400; // Plugin released on .
 $plugin->requires = 2022041908; // Moodle 4.1 is required.
 $plugin->maturity = MATURITY_STABLE; // This is considered as ALPHA for production sites.
-$plugin->release = 'v1.0.2'; // This is our first.
+$plugin->release = 'v2.0'; // Add activity update for mod_customcert.
