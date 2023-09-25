@@ -144,7 +144,9 @@ function onError(err) {
 export const letthemagicbedone = async (course_id, servicefunc, selector) => {
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id);
-        await replaceDOM(selector)(innerHTML);
+        window.console.log(servicefunc + " " + innerHTML);
+
+        //await replaceDOM(selector)(innerHTML);
     } catch (error) {
         const errMsg = `Something went wrong rewriting a DOM Element - servicefunc: ${servicefunc}, error: ${error}`;
         onError(errMsg);
@@ -222,7 +224,7 @@ const modify_Activity = async (course_id, servicefunc, selector) => {
     window.console.log("CMID: " + cmid + "servicefunc" + servicefunc);
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id, { cmid: cmid });
-        window.console.log(innerHTML);
+        window.console.log("modify_Activity" + innerHTML);
         await replaceDOM(selector)(innerHTML);
 
     } catch (error) {
