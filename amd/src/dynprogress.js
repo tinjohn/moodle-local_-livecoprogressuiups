@@ -215,6 +215,9 @@ const modify_Activityinformation = async (course_id, event) => {
  */
 const modify_Activity = async (course_id, servicefunc, selector) => {
     const activity = document.getElementsByClassName(selector)[0];
+    if (!activity) {
+        return true;
+    }
     const cmid = getCmid(activity);
     window.console.log("CMID: " + cmid + "servicefunc" + servicefunc);
     try {
