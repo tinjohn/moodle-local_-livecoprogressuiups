@@ -69,5 +69,14 @@ $functions = array(
         'type' => 'read',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
+    ),   
+
+    'local_livecoprogressuiups_get_activity_innerhtml' => array(
+        'classname' => 'local_livecoprogressuiups_external_customcert_activity',
+        'methodname' => 'get_activity_innerhtml',
+        'description' => 'Return the activity html.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
     ),    
 );

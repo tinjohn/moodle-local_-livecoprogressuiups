@@ -32,4 +32,7 @@ export default {
     activityinfo: {
         qselector: 'div[data-region="activity-information"]',
     },
+    customcertactivity: {
+        class: 'activity customcert modtype_customcert',
+    }
 };

@@ -79,3 +79,14 @@ export const get_H5P_ActivityInformation_InnerHTML = (
         cmid,
     },
 }])[0];
+
+export const get_customcert_Activity_InnerHTML = (
+    courseid,
+    cmid,
+) => fetchMany([{
+    methodname: 'local_livecoprogressuiups_get_activity_innerhtml',
+    args: {
+        courseid,
+        cmid,
+    },
+}])[0];

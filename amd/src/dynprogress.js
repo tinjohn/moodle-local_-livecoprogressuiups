@@ -27,6 +27,7 @@ import { init as listener } from './listener';
 import { get_theme_learnr_Progressbar_InnerHTML } from './local/dynprogress/repository';
 import { get_block_Game_InnerHTML } from './local/dynprogress/repository';
 import { get_H5P_ActivityInformation_InnerHTML } from './local/dynprogress/repository';
+import { get_customcert_Activity_InnerHTML } from './local/dynprogress/repository';
 
 import selectors from 'local_livecoprogressuiups/local/dynprogress/selectors';
 
@@ -108,6 +109,7 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         let response;
         if (options.cmid) {
             response = await getinnerhtmlfunc(course_id, options.cmid);
+            window.console.log(response);
         } else {
             response = await getinnerhtmlfunc(course_id);
         }
@@ -118,7 +120,8 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
             throw errMsg;
         }
     } catch (error) {
-        var errMsg = `in Webservice: - servicefunc: ${getinnerhtmlfunc}, error: ${error}`;
+        var errMsg = `in Webservice: - servicefunc: ${getinnerhtmlfunc}, 
+        error - get_InnerHTML: ${error}, coursid: ${course_id} , ${options.cmid}`;
         throw errMsg;
     }
 }
@@ -202,6 +205,31 @@ const modify_Activityinformation = async (course_id, event) => {
 };
 
 
+/**
+ * Gets cmid.
+ * Gets the innerHTML from the given (service) function (servicefunc).
+ * Replaces the DOM element based on the selector given.
+ * @param {*} course_id
+ * @param {*} servicefunc
+ * @param {*} selector
+ */
+const modify_Activity = async (course_id, servicefunc, selector) => {
+    const activity = document.getElementsByClassName(selector)[0];
+    const cmid = getCmid(activity);
+    window.console.log("CMID: " + cmid + "servicefunc" + servicefunc);
+    try {
+        const innerHTML = await get_InnerHTML(servicefunc, course_id, { cmid: cmid });
+        window.console.log(innerHTML);
+        await replaceDOM(selector)(innerHTML);
+
+    } catch (error) {
+        onError(error);
+    }
+    return true;
+};
+
+
+
 /*
 * This is the real dynprogress that calls all available UI updates.
 */
@@ -228,6 +256,8 @@ export const init = () => {
                 modify_Activityinformation(course_id, event);
                 // The block_game.
                 letthemagicbedone(course_id, get_block_Game_InnerHTML, selectors.game.class);
+                // customcert activity
+                modify_Activity(course_id, get_customcert_Activity_InnerHTML, selectors.customcertactivity.class);
             }, 300);
         });
     });
