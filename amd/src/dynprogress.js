@@ -145,8 +145,7 @@ export const letthemagicbedone = async (course_id, servicefunc, selector) => {
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id);
         window.console.log(servicefunc + " " + innerHTML);
-
-        //await replaceDOM(selector)(innerHTML);
+        await replaceDOM(selector)(innerHTML);
     } catch (error) {
         const errMsg = `Something went wrong rewriting a DOM Element - servicefunc: ${servicefunc}, error: ${error}`;
         onError(errMsg);
