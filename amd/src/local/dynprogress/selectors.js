@@ -34,5 +34,17 @@ export default {
     },
     customcertactivity: {
         class: 'activity customcert modtype_customcert',
+    },
+    pseudolabel: {
+        qselector: 'div[data-activityname="_________________________________________________ ..."]',
+    },
+    pseudolabelsmancomplbutt: {
+        qselector: 'button[data-action="toggle-manual-completion"][data-toggletype="manual:mark-done"]',
+    },
+    modtypelabactHerzlich: {
+        qselector: 'div[data-activityname="Herzlichen Glückwunsch - du hast den Test bestande..."]',
+    },
+    modtypelabactFrische: {
+        qselector: 'div[data-activityname="Frische Dein Wissen auf!Besuche das folgende Nugge..."]',
     }
 };

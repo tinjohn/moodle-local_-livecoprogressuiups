@@ -29,7 +29,10 @@ import { get_block_Game_InnerHTML } from './local/dynprogress/repository';
 import { get_H5P_ActivityInformation_InnerHTML } from './local/dynprogress/repository';
 import { get_customcert_Activity_InnerHTML } from './local/dynprogress/repository';
 
+//import toggleManualCompletionState from 'core_course/manual_completion_toggle';
+
 import selectors from 'local_livecoprogressuiups/local/dynprogress/selectors';
+
 
 /**
  * Gets the course id from body tag.
@@ -109,7 +112,7 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         let response;
         if (options.cmid) {
             response = await getinnerhtmlfunc(course_id, options.cmid);
-            window.console.log(response);
+            // window.console.log(response);
         } else {
             response = await getinnerhtmlfunc(course_id);
         }
@@ -142,9 +145,14 @@ function onError(err) {
  * @param {*} selector
  */
 export const letthemagicbedone = async (course_id, servicefunc, selector) => {
+    const domthere = document.getElementsByClassName(selector)[0];
+    if (!domthere) {
+        return true;
+    }
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id);
-        window.console.log(servicefunc + " " + innerHTML);
+        // window.console.log(servicefunc + " " + innerHTML);
+        // window.console.log(servicefunc);
         await replaceDOM(selector)(innerHTML);
     } catch (error) {
         const errMsg = `Something went wrong rewriting a DOM Element - servicefunc: ${servicefunc}, error: ${error}`;
@@ -196,10 +204,10 @@ const modify_Activityinformation = async (course_id, event) => {
                     onError(error);
                 }
             } else {
-                // window.console.log("lcprogessuiups-- no DOM for ActivityInformation in event");
+                //window.console.log("lcprogessuiups-- no DOM for ActivityInformation in event");
             }
         } else {
-            // window.console.log("lcprogessuiups-- no H5Pscored completionType in event");
+            //window.console.log("lcprogessuiups-- no H5Pscored completionType in event");
         }
     }
     return true;
@@ -215,15 +223,18 @@ const modify_Activityinformation = async (course_id, event) => {
  * @param {*} selector
  */
 const modify_Activity = async (course_id, servicefunc, selector) => {
-    const activity = document.getElementsByClassName(selector)[0];
-    if (!activity) {
+    const domthere = document.getElementsByClassName(selector)[0];
+    if (!domthere) {
+        window.console.log("modify_Activity - DOM not found");
         return true;
     }
-    const cmid = getCmid(activity);
-    window.console.log("CMID: " + cmid + "servicefunc" + servicefunc);
+
+    const cmid = getCmid(domthere);
+    // window.console.log("CMID: " + cmid + "servicefunc" + servicefunc);
     try {
         const innerHTML = await get_InnerHTML(servicefunc, course_id, { cmid: cmid });
-        window.console.log("modify_Activity" + innerHTML);
+        // window.console.log("modify_Activity" + innerHTML);
+        // window.console.log("modify_Activity");
         await replaceDOM(selector)(innerHTML);
 
     } catch (error) {
@@ -232,6 +243,60 @@ const modify_Activity = async (course_id, servicefunc, selector) => {
     return true;
 };
 
+
+/**
+ * Gets cmid.
+ * Gets the innerHTML from the given (service) function (servicefunc).
+ * Replaces the DOM element based on the selector given.
+ * @param {*} course_id
+ * @param {*} servicefunc
+ * @param {*} selectorq
+ */
+const prepareNtrigger_pseudolabel = async (course_id, servicefunc, selectorq) => {
+    const domthere = window.document.querySelector(selectorq);
+    if (!domthere) {
+        window.console.log("prepareNtrigger_pseudolabel - DOM not found" + selectorq);
+        return true;
+    }
+
+    const cmid = getCmid(domthere.closest('li'));
+    // window.console.log("CMID: " + cmid + "servicefunc" + servicefunc);
+    try {
+        const innerHTML = await get_InnerHTML(servicefunc, course_id, { cmid: cmid });
+        // window.console.log("modify_Activity" + innerHTML);
+        // window.console.log("modify_Activity");
+        await modifyDOM(selectorq)(innerHTML);
+
+    } catch (error) {
+        onError(error);
+    }
+    trigger_pseudolabel_mancompl(selectors.pseudolabel.qselector);
+    return true;
+};
+
+
+
+const trigger_pseudolabel_mancompl = (selectorq) => {
+    // pseudolabel activity
+    const domthere = window.document.querySelector(selectorq);
+    if (!domthere) {
+        window.console.log("pseudolabel_activity - DOM not found" + selectorq);
+        return true;
+    } else {
+        window.console.log("pseudolabel_activity - DOM found");
+    }
+    const mancomplbutt = domthere.querySelector(selectors.pseudolabelsmancomplbutt.qselector);
+    if (!mancomplbutt) {
+        window.console.log("pseudolabel_activity - DOM not found" + selectorq);
+        return true;
+    } else {
+        window.console.log("pseudolabel_activity - DOM found" + selectors.pseudolabelsmancomplbutt.qselector);
+    }
+    //const cmid = getCmid(domthere.closest('li'));
+    // window.console.log("CMID: " + cmid + "servicefunc" + servicefunc);
+    mancomplbutt.click();
+    //toggleManualCompletionState(mancomplbutt);
+};
 
 
 /*
@@ -260,8 +325,12 @@ export const init = () => {
                 modify_Activityinformation(course_id, event);
                 // The block_game.
                 letthemagicbedone(course_id, get_block_Game_InnerHTML, selectors.game.class);
-                // customcert activity
+                // For customcert activity.
                 modify_Activity(course_id, get_customcert_Activity_InnerHTML, selectors.customcertactivity.class);
+                // An available pseudolabel.
+                // trigger_pseudolabel_mancompl(selectors.pseudolabel.qselector);
+                // For not available pseudolabel.
+                prepareNtrigger_pseudolabel(course_id, get_customcert_Activity_InnerHTML, selectors.pseudolabel.qselector);
             }, 300);
         });
     });
