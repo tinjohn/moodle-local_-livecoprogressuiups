@@ -92,17 +92,7 @@ export const init = () => {
             // delete all listeners from H5P.externalDispatcher to get rid of double executions
             // without function due to error with given function as argument
             window.document.h5player.H5P.externalDispatcher.off('xAPI');
-            window.document.h5player.H5P.externalDispatcher.on('xAPI', function (event) {
-                if (event && event.data && event.data.statement && event.data.statement.result) {
-                    if (event.data.statement.result.score && event.data.statement.result.score.scaled) {
-                        // window.console.log('lcprogessuiups-- livecoprogressuiups--externalDispatcher-single--', event);
-                        // Create and trigger the custom event cmcompleted.
-                        var cmcompletedEvent = new CustomEvent('cmcompleted',
-                            { detail: { message: 'a course module completed or scored' } });
-                        document.dispatchEvent(cmcompletedEvent);
-                    }
-                }
-            });
+            window.document.h5player.H5P.externalDispatcher.on('xAPI', handleXAPIEvent.bind(window.document.h5player));
         } else {
             // Access the h5pplayer within each window.
             for (var i = 0; i < window.length; i++) {
