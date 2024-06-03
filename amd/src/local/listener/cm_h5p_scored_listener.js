@@ -97,16 +97,21 @@ export const init = () => {
             // Access the h5pplayer within each window.
             for (var i = 0; i < window.length; i++) {
                 var currentWindow = window[i];
-                h5pextlDispatcher = currentWindow.H5P.externalDispatcher;
-                if (h5pextlDispatcher) {
-                    // window.console.log("lcprogessuiups-----found h5p in window ---", h5pextlDispatcher);
-                    // Delete all listeners from H5P.externalDispatcher to get rid of double executions
-                    // without function due to error with given function as argument
-                    // tried a lot to make it work with function - no success.
-                    currentWindow.H5P.externalDispatcher.off('xAPI');
-                    currentWindow.H5P.externalDispatcher.on('xAPI', handleXAPIEvent.bind(currentWindow));
-                } else {
-                    // window.console.log('lcprogessuiups-- livecoprogressuiups--h5playerElement not found');
+                // ADDED tinjohn 03.06.2024 there might be other layers.
+                if (currentWindow.length > 0) {
+                    if (currentWindow.name == "h5player") {
+                        h5pextlDispatcher = currentWindow.H5P.externalDispatcher;
+                        if (h5pextlDispatcher) {
+                            // window.console.log("lcprogessuiups-----found h5p in window ---", h5pextlDispatcher);
+                            // Delete all listeners from H5P.externalDispatcher to get rid of double executions
+                            // without function due to error with given function as argument
+                            // tried a lot to make it work with function - no success.
+                            currentWindow.H5P.externalDispatcher.off('xAPI');
+                            currentWindow.H5P.externalDispatcher.on('xAPI', handleXAPIEvent.bind(currentWindow));
+                        } else {
+                            // window.console.log('lcprogessuiups-- livecoprogressuiups--h5playerElement not found');
+                        }
+                    }
                 }
             }
         }
