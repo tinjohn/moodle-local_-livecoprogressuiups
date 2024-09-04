@@ -379,7 +379,7 @@ export const init = () => {
     if ((prbar1 || prbar2) && course_id) {
         // Add listener that dispatch cmcompleted events when a progress bar exists.
         listener();
-        window.console.log('lcprogessuiups-- livecoprogressuiups----load listener');
+        window.console.log('local_livecoprogressuiups----load listener');
     } else {
         // window.console.log('lcprogessuiups-- livecoprogressuiups----no listeners loaded due to missing prbar');
     }
