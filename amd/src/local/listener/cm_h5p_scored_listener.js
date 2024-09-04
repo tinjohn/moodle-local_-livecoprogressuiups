@@ -57,6 +57,7 @@ export const init = () => {
                         }
                     });
                 document.dispatchEvent(cmcompletedEvent);
+                //alert("Event dispatched");
             }
         }
     };
