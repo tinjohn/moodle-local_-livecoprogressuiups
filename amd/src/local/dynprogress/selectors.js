@@ -26,6 +26,10 @@ export default {
         class: 'progress courseview',
         qselector: 'div.progress.courseview',
     },
+    mooin4progressbar: {
+        class: 'progressbar',
+        qselector: 'div.progressbar',
+    },
     game: {
         class: 'gameTable',
     },

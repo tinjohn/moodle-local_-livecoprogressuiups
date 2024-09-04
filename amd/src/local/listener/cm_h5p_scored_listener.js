@@ -23,6 +23,8 @@
  */
 
 //import {get_H5P_ActivityInformation_InnerHTML} from './repository';
+//import Mooin4Modal from "format_mooin4/mooin4Modal";
+//import * as ILD from 'format_mooin4/idlhvp4';
 
 
 let registered = false;
@@ -57,6 +59,7 @@ export const init = () => {
                         }
                     });
                 document.dispatchEvent(cmcompletedEvent);
+                alert("Event dispatched");
             }
         }
     };
@@ -86,7 +89,7 @@ export const init = () => {
         // The single H5P.
         if (window.document.h5player
             && window.document.h5player.H5P && window.document.h5player.H5P.externalDispatcher) {
-            // window.console.log('lcprogessuiups-- livecoprogressuiups--externalDispatcher-single-gefunden-aka_docready-');
+            alert('lcprogessuiups ORG-- livecoprogressuiups--externalDispatcher-single-gefunden-aka_docready-');
 
             var h5pextlDispatcher = window.document.h5player.H5P.externalDispatcher;
             // delete all listeners from H5P.externalDispatcher to get rid of double executions
@@ -102,14 +105,16 @@ export const init = () => {
                     if (currentWindow.name == "h5player") {
                         h5pextlDispatcher = currentWindow.H5P.externalDispatcher;
                         if (h5pextlDispatcher) {
-                            // window.console.log("lcprogessuiups-----found h5p in window ---", h5pextlDispatcher);
+                            window.console.log("lcprogessuiups ORG-----found h5p in window ---", h5pextlDispatcher);
                             // Delete all listeners from H5P.externalDispatcher to get rid of double executions
                             // without function due to error with given function as argument
                             // tried a lot to make it work with function - no success.
                             currentWindow.H5P.externalDispatcher.off('xAPI');
                             currentWindow.H5P.externalDispatcher.on('xAPI', handleXAPIEvent.bind(currentWindow));
+                            //currentWindow.H5P.externalDispatcher.on('xAPI', ILD.xAPIAnsweredListener.bind(currentWindow));
+
                         } else {
-                            // window.console.log('lcprogessuiups-- livecoprogressuiups--h5playerElement not found');
+                            window.console.log('lcprogessuiups ORG-- livecoprogressuiups--h5playerElement not found');
                         }
                     }
                 }

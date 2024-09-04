@@ -90,3 +90,15 @@ export const get_customcert_Activity_InnerHTML = (
         cmid,
     },
 }])[0];
+
+
+export const get_format_mooin4_Progressbar_InnerHTML = (
+    courseid,
+    cmid,
+) => fetchMany([{
+    methodname: 'local_livecoprogressuiups_get_mooin4_progressbar_innerhtml',
+    args: {
+        courseid,
+        cmid,
+    },
+}])[0];

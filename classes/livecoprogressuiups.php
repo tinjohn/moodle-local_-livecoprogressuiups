@@ -29,6 +29,6 @@ class livecoprogressuiups {
     public static function add_js_dynamics () {
         global $PAGE;
         // Think about to put it in livecoprogressuiups::add_js_dynamics or something. 
-            $PAGE->requires->js_call_amd('local_livecoprogressuiups/dynprogress', 'init');            
+            $PAGE->requires->js_call_amd('local_livecoprogressuiups/dynprogress', 'init');           
     }
 }

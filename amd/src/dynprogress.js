@@ -28,7 +28,7 @@ import { get_theme_learnr_Progressbar_InnerHTML } from './local/dynprogress/repo
 import { get_block_Game_InnerHTML } from './local/dynprogress/repository';
 import { get_H5P_ActivityInformation_InnerHTML } from './local/dynprogress/repository';
 import { get_customcert_Activity_InnerHTML } from './local/dynprogress/repository';
-
+import { get_format_mooin4_Progressbar_InnerHTML } from './local/dynprogress/repository';
 //import toggleManualCompletionState from 'core_course/manual_completion_toggle';
 
 import selectors from 'local_livecoprogressuiups/local/dynprogress/selectors';
@@ -123,8 +123,8 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
             throw errMsg;
         }
     } catch (error) {
-        var errMsg = `in Webservice: - servicefunc: ${getinnerhtmlfunc}, 
-        error - get_InnerHTML: ${error}, coursid: ${course_id} , ${options.cmid}`;
+        var errMsg = `${error} in Webservice: - servicefunc: ${getinnerhtmlfunc}, 
+        error - get_InnerHTML: , coursid: ${course_id} , ${options.cmid}`;
         throw errMsg;
     }
 }
@@ -147,6 +147,7 @@ function onError(err) {
 export const letthemagicbedone = async (course_id, servicefunc, selector) => {
     const domthere = document.getElementsByClassName(selector)[0];
     if (!domthere) {
+        window.console.log("modify by magic - DOM not found");
         return true;
     }
     try {
@@ -213,6 +214,42 @@ const modify_Activityinformation = async (course_id, event) => {
     return true;
 };
 
+/**
+ * The way with more effort for h5p activity information.
+ * Analyses the event inforamtion.
+ * Gets the innerHTML from the given service function (get_H5P_ActivityInformation_InnerHTML).
+ * Modfies the the DOM based on the neareast list element
+ * and looks for the selector selectors.activityinfo.body within the list element.
+ *
+ * @param {*} course_id
+ * @param {*} event
+ */
+const modify_Mooin4Progressbar = async (course_id, event) => {
+    if (event && event.detail) {
+        if (event.detail.completionType && event.detail.completionType == 'H5Pscored') {
+            if (event.detail.framedin) {
+                const eventtarget = event.detail.framedin;
+                // window.console.log('lcprogessuiups-- eventtarget', eventtarget);
+                //var element = eventtarget.closest('li > div');
+                const cmid = getCmid(eventtarget.closest('li'));
+                try {
+                    const innerHTML = await get_InnerHTML(get_format_mooin4_Progressbar_InnerHTML, course_id, { cmid: cmid });
+                    //await modifyDOM(selectors.mooin4progressbar.class, element)(innerHTML);
+                    await replaceDOM(selectors.mooin4progressbar.class)(innerHTML);
+
+                } catch (error) {
+                    onError(error);
+                }
+            } else {
+                //window.console.log("lcprogessuiups-- no DOM for ActivityInformation in event");
+            }
+        } else {
+            //window.console.log("lcprogessuiups-- no H5Pscored completionType in event");
+        }
+    }
+    return true;
+};
+
 
 /**
  * Gets cmid.
@@ -242,6 +279,12 @@ const modify_Activity = async (course_id, servicefunc, selector) => {
     }
     return true;
 };
+
+
+
+
+
+
 
 
 /**
@@ -303,15 +346,18 @@ const trigger_pseudolabel_mancompl = (selectorq) => {
 * This is the real dynprogress that calls all available UI updates.
 */
 export const init = () => {
-    const prbar = document.getElementsByClassName('progress-bar progress-bar-info')[0];
+    window.console.log('lcprogessuiups-- livecoprogressuiups----load listener');
+    alert("loaded");
+
+    const prbar = document.getElementsByClassName('progressbar')[0];
     const course_id = getCourseIdFromBody();
     if (prbar && course_id) {
         // Add listener that dispatch cmcompleted events.
-        // window.console.log('lcprogessuiups-- livecoprogressuiups----load listener');
         listener();
     } else {
         // window.console.log('lcprogessuiups-- livecoprogressuiups----no listeners loaded due to missing prbar');
     }
+
 
     window.addEventListener('load', function () {
         // Add an event listener to handle the cmcompleted - send from the local_livecoprogressuiups/listener.
@@ -331,6 +377,9 @@ export const init = () => {
                 // trigger_pseudolabel_mancompl(selectors.pseudolabel.qselector);
                 // For not available pseudolabel.
                 prepareNtrigger_pseudolabel(course_id, get_customcert_Activity_InnerHTML, selectors.pseudolabel.qselector);
+
+                // The theme_learnr_progressbar.
+                modify_Mooin4Progressbar(course_id, event) ;
             }, 300);
         });
     });

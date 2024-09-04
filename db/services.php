@@ -79,4 +79,15 @@ $functions = array(
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
         'ajax' => true,
     ),    
+     
+    'local_livecoprogressuiups_get_mooin4_progressbar_innerhtml' => array(
+        'classname' => 'local_livecoprogressuiups_external_format_mooin4_progressbar',
+        'methodname' => 'get_mooin4_progressbar_innerhtml',
+        'description' => 'Return the format mooin4 section progressbar html.',
+        'type' => 'read',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+        'ajax' => true,
+    ),    
+
+    
 );
