@@ -26,9 +26,10 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+//use format_mooin4\local\utils as utils;
+
 require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->libdir/completionlib.php");
-//require_once('$CFG->libdir/course/format/mooin4/locallib.php');
 
 
 if (!class_exists('local_livecoprogressuiups_external')) {
@@ -68,8 +69,10 @@ class local_livecoprogressuiups_external_format_mooin4_progressbar extends local
 
 //return("<div class=Tina></div>");  
         
-        require_once($CFG->dirroot . '/course/format/mooin4/locallib.php');
+        //require_once($CFG->dirroot . '/course/format/mooin4/locallib.php');
+        //require_once($CFG->libdir . '/course/format/mooin4/lib.php');
         require_once($CFG->libdir . '/grouplib.php');
+        require_once($CFG->dirroot . '/course/format/mooin4/lib.php');
 
             $warnings = [];
             $arrayparams = array(
@@ -106,8 +109,12 @@ class local_livecoprogressuiups_external_format_mooin4_progressbar extends local
                 // $progressBar = $renderer->courseprogressbar();
            
             // aus locallib.php mooin4
-            $section_progress = get_section_progress($course->id, $section->id, $USER->id);
-            $progressBar =  get_progress_bar($section_progress, 100, $section->id);
+            // mod TJ 21092024
+            //$section_progress = get_section_progress($course->id, $section->id, $USER->id);
+            $section_progress = format_mooin4\local\utils::get_section_progress($course->id, $section->id, $USER->id);
+            // progress bar has a mustache in mooin4 new version but not necessary for smooth transition of width
+            //$progressBar =  get_progress_bar($section_progress, 100, $section->id);
+
                 
             $results = array(
                 'innerHTML' => array(
@@ -118,6 +125,14 @@ class local_livecoprogressuiups_external_format_mooin4_progressbar extends local
             );
             return $results;
 
+/* DEBUG            $results = array(
+                'innerHTML' => array(
+                    'progress' => 100,
+                    'sectionId' => 4
+                ),
+                'warnings' => $warnings
+            );
+ */            return $results;
             //            return json_encode($results);
     }
 

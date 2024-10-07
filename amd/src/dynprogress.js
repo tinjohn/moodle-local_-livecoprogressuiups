@@ -90,9 +90,11 @@ function replaceDOM(selectorclass, element = document) {
 */
 function modifyDOM(selectorq, element = document) {
     return async function onResolve(innerHTML) {
-        // window.console.log("---modifyDOM--", selectorq);
+        window.console.log("---modifyDOM--", selectorq);
         var selelement = element.querySelector(selectorq);
-        selelement.innerHTML = innerHTML;
+        if(selelement) {
+            selelement.innerHTML = innerHTML;
+        }
     };
 }
 
@@ -112,7 +114,7 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         let response;
         if (options.cmid) {
             response = await getinnerhtmlfunc(course_id, options.cmid);
-            // window.console.log(response);
+            window.console.log(response);
         } else {
             response = await getinnerhtmlfunc(course_id);
         }
@@ -127,6 +129,7 @@ async function get_InnerHTML(getinnerhtmlfunc, course_id, options = {}) {
         error - get_InnerHTML: , coursid: ${course_id} , ${options.cmid}`;
         throw errMsg;
     }
+
 }
 
 /**
@@ -236,26 +239,35 @@ const modify_Mooin4Progressbar = async (course_id, event) => {
                     // get_InnerHTML unglücklicher Name - hole das Ergebnis des Webservices passte besser
                     const innerHTML = await get_InnerHTML(get_format_mooin4_Progressbar_InnerHTML, course_id, { cmid: cmid });
                     // get_format_mooin4_Progressbar_InnerHTML holt jetzt mal nur die percentage
-
+                    window.console.log('lcprogessuiups-- innerHTML - the progress', innerHTML.progress);
                     const sectionProgress = innerHTML.progress; // Access by key
                     const sectionId = innerHTML.sectionId; // Access by key
                     const warnings = warnings; // Access warnings array
 
-                    // Fixed concatenation of the `barselector` string
-                    const barselector = 'mooin4ection' + sectionId; // Use string concatenation correctly
-                    const bartextselector = 'mooin4ection-text-' + sectionId; // Use string concatenation correctly
+                    // Fixed concatenation of the `barselector` string für altes Mooin
+                    // const barselector = 'mooin4ection' + sectionId; // Use string concatenation correctly
+                    // const bartextselector = 'mooin4ection-text-' + sectionId; // Use string concatenation correctly
 
                     // Fixed method to get element by id
                     //const elementTomod = document.querySelectorAll('[id^="mooin4ection"]')[0];
-                    const elementTomodbar = document.getElementById(barselector); // Fixed `getElementById`
-                    const elementTomodtext = document.getElementById(bartextselector); // Fixed `getElementById`
-
+                    // stimmt fuer neues Mooin
+                    const elementTomodbar =  document.getElementsByClassName('progressbar-inner')[0]; // Fixed `getElementById`
+                    //const elementTomodtext = document.getElementById(bartextselector); // Fixed `getElementById`
                     if (elementTomodbar) {
                         elementTomodbar.style.width = sectionProgress + '%';
-                        elementTomodtext.innerHTML = sectionProgress + '% ';
+                        //elementTomodtext.innerHTML = sectionProgress + '% ';
                     } else {
-                        window.console.log(`Element with id mooin4ection not found.`);
+                        window.console.log(`Element with id progressbar-inner not found.`);
                     }
+                    const elementTomodtext =  document.querySelector('span[data-for="section-progress"]');
+                    //const elementTomodtext = document.getElementById(bartextselector); // Fixed `getElementById`
+                    if (elementTomodtext) {
+                        //elementTomodbar.style.width = sectionProgress + '%';
+                        elementTomodtext.innerHTML = sectionProgress;
+                    } else {
+                        window.console.log(`Element with queryselector section-progress not found.`);
+                    }
+
                     //await modifyDOM(selectors.mooin4progressbar.class, element)(innerHTML);
 
 
@@ -391,6 +403,7 @@ export const init = () => {
             // window.console.log('lcprogessuiups-- cmcompleted----Custom event triggered:', event.detail.message);
             // Implement wait 300 ms to give some time to the core events dealing with the completion.
             setTimeout(function () {
+
                 // The theme_learnr_progressbar.
                 letthemagicbedone(course_id, get_theme_learnr_Progressbar_InnerHTML, selectors.progressbar.class);
                 // The H5P completion section. Needs some more arguments to do the magic.
@@ -400,7 +413,7 @@ export const init = () => {
                 // For customcert activity.
                 modify_Activity(course_id, get_customcert_Activity_InnerHTML, selectors.customcertactivity.class);
                 // An available pseudolabel.
-                // trigger_pseudolabel_mancompl(selectors.pseudolabel.qselector);
+                trigger_pseudolabel_mancompl(selectors.pseudolabel.qselector);
                 // For not available pseudolabel.
                 prepareNtrigger_pseudolabel(course_id, get_customcert_Activity_InnerHTML, selectors.pseudolabel.qselector);
 
